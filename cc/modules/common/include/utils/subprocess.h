@@ -17,6 +17,7 @@
 // ==============================================================================
 #pragma once
 
+#if 0
 #include <thread>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -33,8 +34,17 @@
 #include <sstream>
 #include <fstream>
 using namespace std;
+#endif
 
-static inline pid_t get_subprocess(vector<pid_t>& pids) {
+#include <vector>
+#include <sys/types.h>
+
+static inline pid_t get_subprocess(std::vector<pid_t>& pids); 
+static inline void wait_subprocess(const std::vector<pid_t>& pids);
+int main_example(int argc, char* argv[]);
+#if 0
+static inline pid_t get_subprocess(vector<pid_t>& pids); 
+{
   pid_t pid = fork();
   if (pid < 0) {
     cerr << "error in fork! pid:" << getpid() << endl;
@@ -83,3 +93,4 @@ int main_example(int argc, char* argv[]) {
 
   return 0;
 }
+#endif

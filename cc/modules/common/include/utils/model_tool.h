@@ -18,7 +18,7 @@
 #pragma once
 
 #include "cc/modules/common/include/utils/helper.h"
-#include "cc/modules/common/include/utils/logger.h"
+#include "cc/modules/common/include/utils/rtt_logger.h"
 #include "cc/modules/common/include/utils/simple_timer.h"
 #include "cc/modules/common/include/utils/random_util.h"
 //#include "cc/modules/common/include/utils/file_directory.h"

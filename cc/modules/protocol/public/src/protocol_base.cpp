@@ -20,11 +20,12 @@
 #include <stdexcept>
 #include <string>
 #include <iostream>
+
 using namespace std;
 
 namespace rosetta {
 
-int ProtocolBase::Init(std::string config_json_str) {
+int ProtocolBase::Init() {
   cout << "calling ProtocolBase::Init" << endl;
   THROW_NOT_IMPL_FN(__func__);
   return -1;
@@ -34,6 +35,21 @@ int ProtocolBase::Uninit() {
   cout << "calling ProtocolBase::Uninit" << endl;
   THROW_NOT_IMPL_FN(__func__);
   return -1;
+}
+
+void ProtocolBase::SetSaverModel(const vector<string>& mode) {
+  std::lock_guard<std::mutex> lock(status_mtx_);
+  context_->SAVER_MODE = mode;
+}
+
+void ProtocolBase::SetRestoreModel(const vector<string>& mode) {
+  std::lock_guard<std::mutex> lock(status_mtx_);
+  context_->RESTORE_MODE = mode;
+}
+
+void ProtocolBase::SetFloatPrecision(int float_precision) {
+  std::lock_guard<std::mutex> lock(status_mtx_);
+  context_->FLOAT_PRECISION = float_precision;
 }
 
 } // namespace rosetta

@@ -17,6 +17,12 @@
     - [Model Loading and Prediction](#model-loading-and-prediction)
   - [Logistic Regression](#logistic-regression)
   - [Support big data sets](#support-big-data-sets)
+  - [Support stop Rosetta execution at any time](#support-stop-rosetta-execution-at-any-time)
+- [Privacy-Preserving Deep Learning](#privacy-preserving-deep-learning)
+  - [MLP Neural Network](#mlp-neural-network)
+    - [TensorFlow Version MLP](#tensorflow-version-mlp)
+    - [Rosetta Version MLP](#rosetta-version-mlp)
+- [Support multitasking concurrency](#support-multitasking-concurrency)
 - [Conclusion](#conclusion)
 - [Additional Notes](#additional-notes)
   - [Dataset Description](#dataset-description)
@@ -25,7 +31,7 @@
 
 ## Installation and Deployment
 
-If you have not set up a `rosetta` environment yet, please refer to [Deployment Document](./DEPLOYMENT.md).
+If you have not set up a `Rosetta` environment yet, please refer to [Deployment Document](./DEPLOYMENT.md).
 
 In order to simplify the description of this tutorial, the examples below are based on `single machine with multiple nodes` mode, please refer to `Deployment Documentation` for deployment in this way.
 
@@ -37,9 +43,9 @@ Unless otherwise noted, all commands are run in the path of `example/tutorials/c
 
 <br/>
 
-Now, let us enter this exciting moment together: how to use `rosetta` in the easiest way?
+Now, let us enter this exciting moment together: how to use `Rosetta` in the easiest way?
 
-The steps are very simple. Whenever you want to use `rosetta` (`Python` script file), just import our `rosetta` package, as follows:
+The steps are very simple. Whenever you want to use `Rosetta` (`Python` script file), just import our `Rosetta` package, as follows:
 
 ```python
 import latticex.rosetta as rtt
@@ -47,7 +53,7 @@ import latticex.rosetta as rtt
 
 <font style = "color: green"> Note: </font>
 
-`rtt` is short for `rosetta`, just like `tf` for `tensorflow`, `np` for `numpy`, `pd` for `pandas` . Let's just view this as a convention.
+`rtt` is short for `Rosetta`, just like `tf` for `TensorFlow`, `np` for `numpy`, `pd` for `pandas` . Let's just view this as a convention.
 
 <br/>
 
@@ -97,7 +103,7 @@ Let‘s be a little more specific. In the following example, we will introduce t
 
 For comparison，Let's just solve this problem without taking their privacy into consideration at first.
 
-This is trivial, every child can do this in less than one second. But in order to compare with `rosetta`, here we write a toy program in `tensorflow` style:
+This is trivial, every child can do this in less than one second. But in order to compare with `Rosetta`, here we write a toy program in `TensorFlow` style:
 
 The first step is to import the package:
 
@@ -143,9 +149,9 @@ It's intuitive, I won't go into details.
 
 #### Rosetta Version
 
-The above is a artificial one. Now let's see how to use `rosetta` to solve the original problem of millionaires without leaking their privacy. Let's begin, and you will see it is very simple!
+The above is a artificial one. Now let's see how to use `Rosetta` to solve the original problem of millionaires without leaking their privacy. Let's begin, and you will see it is very simple!
 
-The first step is to import the `rosetta` package.
+The first step is to import the `Rosetta` package.
 
 ```py
 import latticex.rosetta as rtt
@@ -167,7 +173,7 @@ Alice = tf.Variable(rtt.private_console_input(0))
 Bob = tf.Variable(rtt.private_console_input(1))
 ```
 
-The forth step is exactly the same as `tensorflow`.
+The forth step is exactly the same as `TensorFlow`.
 
 ```py
 res = tf.greater(Alice, Bob)
@@ -211,7 +217,7 @@ The result indicates that `Alice` has more wealth than `Bob`.
 
 <br/>
 
-> For a description of all operators supported by `rosetta` including `SecureReveal`, please refer to our [API Document](./API_DOC.md).
+> For a description of all operators supported by `Rosetta` including `SecureReveal`, please refer to our [API Document](./API_DOC.md).
 
 <br/>
 
@@ -223,13 +229,13 @@ We will talk about the combination of `Privacy-Preserving` and`Machine Learning 
 
 ### Linear Regression
 
-This section introduces how to use `rosetta` to perform a complete `Linear Regression` task, including `data processing`, `training and model saving`, `model loading and prediction` and `evaluation`.
+This section introduces how to use `Rosetta` to perform a complete `Linear Regression` task, including `data processing`, `training and model saving`, `model loading and prediction` and `evaluation`.
 
-Before using `rosetta` for machine learning, in order to compare with `rosetta`-backed MPC version, let's see how we do the same task in native `tensorflow` style without the concern of data privacy.
+Before using `Rosetta` for machine learning, in order to compare with `Rosetta`-backed MPC version, let's see how we do the same task in native `TensorFlow` style without the concern of data privacy.
 
 #### TensorFlow Version Linear Regression
 
-Here is a simple `Linear Regression` with `tensorflow`.
+Here is a simple `Linear Regression` with `TensorFlow`.
 
 - Import necessary packages, set training parameters, etc.
 
@@ -257,7 +263,7 @@ learning_rate = 0.0002
 
 Please refer to the appendix at the end of this tutorial.
 
-We highlight codes that are different from `rosetta`, and we will focus more on them later.
+We highlight codes that are different from `Rosetta`, and we will focus more on them later.
 
 ```py
 # real data
@@ -343,7 +349,7 @@ Y_pred: [[4.8402567]
 
 #### Rosetta Basic Version
 
-As mentioned above, if you have an existing model training script (`.py`) written with `tensorflow`, then all you need to do is import the following packages on the first line of this script file:
+As mentioned above, if you have an existing model training script (`.py`) written with `TensorFlow`, then all you need to do is import the following packages on the first line of this script file:
 
 ```python
 import latticex.rosetta as rtt
@@ -363,9 +369,9 @@ rtt.rtt.activate("SecureNN")
 
 Please refers to the appendix at the end of this article for the dataset description.
 
-We have highlighted the spots that are different from `tensorflow`. In contrast to the native `tensorflow` version without data privacy. Except for the importing of the `rosetta` package, only these several lines are different.
+We have highlighted the spots that are different from `TensorFlow`. In contrast to the native `TensorFlow` version without data privacy. Except for the importing of the `Rosetta` package, only these several lines are different.
 
-`rosetta` provides a class, `PrivateDataset`, specifically for handling private data sets. Check the relevant source code for details.
+`Rosetta` provides a class, `PrivateDataset`, specifically for handling private data sets. Check the relevant source code for details.
 
 ```py
 # real data
@@ -382,9 +388,9 @@ Please refer to [rtt-linear_regression.py](../example/tutorials/code/rtt-linear_
 
 <br/>
 
-OK. Now let's briefly summarize the difference from the `tensorflow` version:
+OK. Now let's briefly summarize the difference from the `TensorFlow` version:
 
-- Importing `rosetta` package.
+- Importing `Rosetta` package.
 - Activate protocol.
 - Loading data sets.
 
@@ -473,17 +479,17 @@ Y_pred: [[b'4.844925']
  [b'6.159866']]
 ```
 
-Try to compare this output with the output of the `tensorflow` version to see how much the error is.
+Try to compare this output with the output of the `TensorFlow` version to see how much the error is.
 
 #### Comparison and Evaluation 1
 
-Here is the tutorial, you can get both the predicted value and weight value of `tensorflow` version and `rosetta` version.
+Here is the tutorial, you can get both the predicted value and weight value of `TensorFlow` version and `Rosetta` version.
 
 For models with few parameters, (the error in the previous section) can be barely recognized at the first sight, but if there are many parameters and the dataset is very large, then auxiliary tools are needed.
 
 We only list the final comparison results here. For details, refer to `Comparison and Evaluation 2`.
 
-Below is a comparison of the evaluation result of `tensorflow` and `rosetta`.
+Below is a comparison of the evaluation result of `TensorFlow` and `Rosetta`.
 
 TensorFlow:
 
@@ -519,12 +525,12 @@ We can see that the evaluation scores (with little loss on precision) are almost
 <details>
   <summary><mark><font color=darkred>Error comparison (linear regression)</font></mark></summary>
 
-The following figure is about the absolute error comparison between the predicted values ​​of `tensorflow` and `rosetta`.
+The following figure is about the absolute error comparison between the predicted values ​​of `TensorFlow` and `Rosetta`.
 
 ![linear_regression_stat-Y-diff](./_static/tutorials/linear_regression_stat-Y-diff.png)
 
- 
-The following figure is about the relative error comparison between the predicted values ​​of `tensorflow` and `rosetta`.
+
+The following figure is about the relative error comparison between the predicted values ​​of `TensorFlow` and `Rosetta`.
 
 ![linear_regression_stat-Y-diff4](./_static/tutorials/linear_regression_stat-Y-diff4.png)
 
@@ -539,7 +545,7 @@ We only show the final result in `Comparison and Evaluation 1` section. Here we 
 
 <br/>
 
-Next, let’s modify the last part of the program and add the statistical functionality (this modification is the same for the `tesnorflow` version and the `rosetta` version)
+Next, let’s modify the last part of the program and add the statistical functionality (this modification is the same for the `TensorFlow` version and the `Rosetta` version)
 
 ```py
 # #############################################################
@@ -596,13 +602,13 @@ Then, you will get the evaluation results after running it as follows:
 
 So far, we just output the model parameters and predicted values ​​to the terminal. How can we save the trained model as we often do in machine learning?
 
-You may wonder, since we are doing all these in a multi-party way, WHERE will the trained model (should) be saved after running with `rosetta`? And HOW to save it? Good question. Let’s talk about the model saving.
+You may wonder, since we are doing all these in a multi-party way, WHERE will the trained model (should) be saved after running with `Rosetta`? And HOW to save it? Good question. Let’s talk about the model saving.
 
 There are several conventions:
 
-- If you want to use `rosetta` for prediction on shared private dataset, please save the model as `cipher text`.
+- If you want to use `Rosetta` for prediction on shared private dataset, please save the model as `cipher text`.
 
-- If you save the model as plain text, and want to use this model to make predictions on plaintext, please use `tensorflow` directly to make predictions.
+- If you save the model as plain text, and want to use this model to make predictions on plaintext, please use `TensorFlow` directly to make predictions.
 
 Regarding the saving of the plaintext result, you can choose to save at node 0, node 1, node 2, or all three nodes. This setting is in the configuration file.
 
@@ -623,11 +629,11 @@ Regarding the saving of the plaintext result, you can choose to save at node 0, 
 
 <br/>
 
-In this section, we will use `rosetta` to train the model, then save the model as `plaintext`, and then load this `plaintext model` into the `tensorflow` version for prediction. Finally we check the difference between using `tensorflow` on plaintext dataset without data privacy with this one.
+In this section, we will use `Rosetta` to train the model, then save the model as `plaintext`, and then load this `plaintext model` into the `TensorFlow` version for prediction. Finally we check the difference between using `TensorFlow` on plaintext dataset without data privacy with this one.
 
 <br/>
 
-Based on the previous version of `rosetta`, we added some code related to `save`.
+Based on the previous version of `Rosetta`, we added some code related to `save`.
 
 Before training starts:
 
@@ -653,7 +659,7 @@ And then run it as follows:
 
 #### Model Loading and Prediction
 
-The model has been saved to the corresponding node in the previous step (according to the configuration file). Now use `tensorflow` to load the plaintext model saved in the previous step and make predictions.
+The model has been saved to the corresponding node in the previous step (according to the configuration file). Now use `TensorFlow` to load the plaintext model saved in the previous step and make predictions.
 
 ```py
 # save
@@ -722,7 +728,7 @@ With the foundation of `Linear Regression` above, then `Logistic Regression` is 
 
 Based on Linear Regression, we use `sigmoid` as a binary classifier and `cross entropy` as a loss function to build a Logistic Regression model.
 
-Regardless of the `tensorflow` version or the`rosetta` version, the changes are the same. Compared with the `Linear Regression` version, only the model construction part needs to be changed, that is, only the following modification is needed:
+Regardless of the `TensorFlow` version or the`Rosetta` version, the changes are the same. Compared with the `Linear Regression` version, only the model construction part needs to be changed, that is, only the following modification is needed:
 
 - On the predicted value part, add `sigmoid` functionality
 
@@ -801,12 +807,12 @@ Rosetta:
 <details>
   <summary><mark><font color=darkred>Error comparison (logistic regression)</font></mark></summary>
 
-The following figure is about the absolute error comparison between the predicted values ​​of `tensorflow` and `rosetta`.
+The following figure is about the absolute error comparison between the predicted values ​​of `TensorFlow` and `Rosetta`.
 
 ![logistic_regression_stat-Y-diff](./_static/tutorials/logistic_regression_stat-Y-diff.png)
 
 
-The following figure is about the relative error comparison between the predicted values ​​of `tensorflow` and `rosetta`.
+The following figure is about the relative error comparison between the predicted values ​​of `TensorFlow` and `Rosetta`.
 
 ![logistic_regression_stat-Y-diff4](./_static/tutorials/logistic_regression_stat-Y-diff4.png)
 
@@ -823,7 +829,7 @@ The following figure is about the relative error comparison between the predicte
 
 The above linear regression and logistic regression models all load the entire dataset into memory and then take it out in batch order for training, and as the size of the dataset grows, it becomes impractical to load the dataset into memory at once.
 
-Major plaintext AI frameworks such as TensorFlow are aware of and provide solutions, TensorFlow provides the relevant Dataset APIs to build low-memory consuming, complex, reusable data pipelines, since Rosetta uses Tensorflow as a backend, it can be reused with minor modifications.
+Major plaintext AI frameworks such as TensorFlow are aware of and provide solutions, TensorFlow provides the relevant Dataset APIs to build low-memory consuming, complex, reusable data pipelines, since Rosetta uses TensorFlow as a backend, it can be reused with minor modifications.
 
 We use logistic regression model as an example to illustrate how to train a model with large datasets.
 
@@ -869,6 +875,354 @@ Analysis of the code in tf-ds-lr.py and rtt-ds-lr.py reveals two main difference
         fields = rtt.PrivateInput(fields, data_owner=0) # P0 hold the file data
         return fields
     ```
+### Support stop Rosetta execution at any time
+The `Rosetta` backend uses the `TensorFlow` execution engine to execute the computational graph constructed by Rosetta's privacy operations, so you can use the same method as `TensorFlow` to stop the graph at any time during the training of a privacy AI model. To stop the execution of the graph in `TensorFlow`, we simply call python API `Session::close()`, so in `Rosetta` we can also stop the execution of the computed graph by calling the python API `Session::close()`.
+
+## Privacy-Preserving Deep Learning
+
+### MLP Neural Network
+
+After reading the content of [Privacy-Preserving Machine Learning](#Privacy-Preserving Machine Learning), you must  have a certain understanding of Rosetta and TensorFlow 's grammar. So, in this section, we have offer an example of classification of mnist dataset by MLP Neural Network.
+
+Firstly, this is the TensorFlow version 
+
+#### TensorFlow Version MLP
+
+- Import related packages and load dataset
+
+```python
+from tensorflow.examples.tutorials.mnist import input_data
+import os
+import tensorflow as tf
+mnist_home = os.path.join("/tmp/data/", 'mnist')
+mnist = input_data.read_data_sets(mnist_home, one_hot=True)
+# split the data into train and test
+X_train = mnist.train.images
+X_test = mnist.test.images
+Y_train = mnist.train.labels
+Y_test = mnist.test.labels
+# make iterator
+train_dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
+train_dataset = train_dataset.batch(100).repeat()
+test_dataset = tf.data.Dataset.from_tensor_slices((X_test, Y_test))
+test_dataset = test_dataset.batch(100).repeat()
+train_iterator = train_dataset.make_one_shot_iterator()
+train_next_iterator = train_iterator.get_next()
+test_iterator = test_dataset.make_one_shot_iterator()
+test_next_iterator = test_iterator.get_next()
+```
+
+- Set hyperparameters and construct MLP model
+
+```python
+num_outputs = 10 
+num_inputs = 784
+w=[]
+b=[]
+
+def mlp(x, num_inputs, num_outputs, num_layers, num_neurons):
+    w = []
+    b = []
+    for i in range(num_layers):
+        # weights
+        w.append(tf.Variable(tf.random_normal(
+            [num_inputs if i == 0 else num_neurons[i - 1],
+             num_neurons[i]], seed = 1, dtype=tf.float64),
+            name="w_{0:04d}".format(i), dtype=tf.float64
+        ))
+        # biases
+        b.append(tf.Variable(tf.random_normal(
+            [num_neurons[i]], seed = 1, dtype=tf.float64),
+            name="b_{0:04d}".format(i), dtype=tf.float64
+        ))
+    w.append(tf.Variable(tf.random_normal(
+        [num_neurons[num_layers - 1] if num_layers > 0 else num_inputs,
+         num_outputs], seed = 1, dtype=tf.float64), name="w_out", dtype=tf.float64))
+    b.append(tf.Variable(tf.random_normal([num_outputs], seed = 1, dtype=tf.float64), name="b_out", dtype=tf.float64))
+
+    # x is input layer
+    layer = x
+    # add hidden layers
+    for i in range(num_layers):
+        layer = tf.nn.relu(tf.matmul(layer, w[i]) + b[i])
+    # add output layer
+    layer = tf.matmul(layer, w[num_layers]) + b[num_layers]
+
+    return layer
+```
+
+- Implement training function and related functions
+
+```python
+def mnist_batch_func(batch_size=100):
+    X_batch, Y_batch = mnist.train.next_batch(batch_size)
+    return [X_batch, Y_batch]
+  
+def tensorflow_classification(n_epochs, n_batches,
+                              batch_size,
+                              model, optimizer, loss, accuracy_function,
+                              X_test, Y_test):
+    with tf.Session() as tfs:
+        tfs.run(tf.global_variables_initializer())
+        for epoch in range(n_epochs):
+            epoch_loss = 0.0
+            for batch in range(n_batches):
+                X_batch, Y_batch = tfs.run(train_next_iterator)
+                feed_dict = {x: X_batch, y: Y_batch}
+                _, batch_loss = tfs.run([optimizer, loss], feed_dict)
+                epoch_loss += batch_loss
+        
+            average_loss = epoch_loss / n_batches
+            print("epoch: {0:04d} loss = {1:0.6f}".format(
+                epoch, average_loss))
+        feed_dict = {x: X_test, y: Y_test}
+        accuracy_score = tfs.run(accuracy_function, feed_dict=feed_dict)
+        print("accuracy={0:.8f}".format(accuracy_score))
+        
+# construct input
+x = tf.placeholder(dtype=tf.float64, name="x", 
+                    shape=[None, num_inputs])
+# construct output
+y = tf.placeholder(dtype=tf.float64, name="y", 
+                    shape=[None, 10])
+# hidden layers' parameters
+num_layers = 2
+num_neurons = [128, 256]
+learning_rate = 0.01
+n_epochs = 30
+batch_size = 100
+n_batches = int(mnist.train.num_examples/batch_size)
+
+model = mlp(x=x,
+            num_inputs=num_inputs,
+            num_outputs=num_outputs,
+            num_layers=num_layers,
+            num_neurons=num_neurons)
+
+loss = tf.reduce_mean(
+    tf.nn.sigmoid_cross_entropy_with_logits(logits=model, labels=y))
+optimizer = tf.train.GradientDescentOptimizer(
+    learning_rate=learning_rate).minimize(loss)
+
+predictions_check = tf.equal(tf.argmax(model, 1), tf.argmax(y, 1))
+accuracy_function = tf.reduce_mean(tf.cast(predictions_check, dtype=tf.float64))
+# train
+tensorflow_classification(n_epochs=n_epochs, 
+   n_batches=n_batches, 
+   batch_size=batch_size, 
+   model = model, 
+   optimizer = optimizer, 
+   loss = loss, 
+   accuracy_function = accuracy_function, 
+   X_test = X_test, 
+   Y_test = Y_test
+   )
+```
+
+For the complete code, please refer to [tf-mlp_mnist.py](../example/tutorials/code/tf-mlp_mnist.py)
+
+Run it as follows:
+
+```python
+python ./tf-mlp_mnist.py
+```
+
+Output as follows:
+
+```python
+epoch: 0000 loss = 17.504000
+epoch: 0001 loss = 6.774922
+epoch: 0002 loss = 4.993065
+epoch: 0003 loss = 4.047511
+epoch: 0004 loss = 3.440471
+epoch: 0005 loss = 3.006049
+  ...
+epoch: 0027 loss = 0.874316
+epoch: 0028 loss = 0.847307
+epoch: 0029 loss = 0.821776
+accuracy=0.91100000
+```
+
+#### Rosetta Version MLP
+
+- Import packages and activate protocol
+
+```python
+import os
+import tensorflow as tf
+import latticex.rosetta as rtt
+import csv
+import numpy as np
+
+rtt.set_backend_loglevel(1)
+np.set_printoptions(suppress=True)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+np.random.seed(0)
+rtt.activate("SecureNN")
+mpc_player_id = rtt.py_protocol_handler.get_party_id()
+```
+
+- Load dataset
+
+If you want to understand the method of loading dataset, please refer to [Support big data sets](#Support big data sets).
+
+```python
+# load data
+file_x = '../dsets/P' + str(mpc_player_id) + "/mnist_train_x.csv"
+file_y = '../dsets/P' + str(mpc_player_id) + "/mnist_train_y.csv"
+X_train_0 = rtt.PrivateTextLineDataset(file_x, data_owner=0)
+X_train_1 = rtt.PrivateTextLineDataset(file_x, data_owner=1)
+Y_train = rtt.PrivateTextLineDataset(file_y, data_owner=1)
+
+# dataset decode
+def decode_p0(line):
+    fields = tf.string_split([line], ',').values
+    fields = rtt.PrivateInput(fields, data_owner=0)
+    return fields
+def decode_p1(line):
+    fields = tf.string_split([line], ',').values
+    fields = rtt.PrivateInput(fields, data_owner=1)
+    return fields
+  
+# dataset pipeline
+X_train_0 = X_train_0.map(decode_p0).cache(f"{cache_dir}/cache_p0_x0").batch(BATCH_SIZE).repeat()
+X_train_1 = X_train_1.map(decode_p1).cache(f"{cache_dir}/cache_p1_x1").batch(BATCH_SIZE).repeat()
+Y_train = Y_train.map(decode_p1).cache(f"{cache_dir}/cache_p1_y").batch(BATCH_SIZE).repeat()
+```
+
+- The model can be saved in the folder `log/`
+
+```python
+def tensorflow_classification(n_epochs, n_batches,
+                              batch_size,
+                              model, optimizer, loss
+                              ):
+    with tf.Session() as tfs:
+        tfs.run(tf.global_variables_initializer())
+        tfs.run([iter_x0.initializer, iter_x1.initializer, iter_y.initializer])
+        for epoch in range(n_epochs):
+            epoch_loss = 0.0
+            for i in range(n_batches):
+                tfs.run([optimizer, loss])
+        saver.save(tfs, './log/ckpt'+str(mpc_player_id)+'/model')
+```
+
+The rest is the same as TensorFlow Version MLP, for the complete code, please refer to [rtt-mlp_mnist.py](../example/tutorials/code/rtt-mlp_mnist.py)
+
+Run it as follows:
+
+```python
+./tutorials.sh rtt mlp_mnist
+```
+
+Plaintext model can be saved at folder `log/`, you can the follow code to evaluate the mode
+
+```python
+python tf-test_mlp_acc.py
+```
+
+The example of results as follows:
+
+```python
+['w_out:0', 'b_out:0']
+[array([[ 0.24279785, -0.35299683, -0.83648682, ..., -1.71618652,
+         0.65466309, -0.75320435],
+       [ 0.16467285, -1.01171875,  0.07672119, ...,  2.43850708,
+        -0.34365845,  0.50970459],
+       [ 0.68637085,  0.59738159,  0.21426392, ..., -2.1026001 ,
+        -1.08334351, -0.51135254],
+       ...,
+       [ 1.18951416,  0.50506592, -0.19161987, ...,  0.31906128,
+        -0.21728516, -1.74258423],
+       [ 0.47128296, -1.10772705, -1.14147949, ..., -0.80792236,
+        -0.2272644 , -0.60620117],
+       [-1.35250854, -0.00039673, -1.37692261, ...,  0.28158569,
+        -1.86367798,  0.2359314 ]]), array([ 0.05230713, -0.48815918, -0.75996399, -0.41955566,  1.78201294,
+       -0.42456055, -0.03417969, -1.80670166,  0.40750122, -0.93180847])]
+accuracy=0.14000000
+```
+
+Due to the model did not add hidden layers and used the mini-datasets, the accuracy is very low. If you are interested in the model, you can adjust the structure of the model and size of the datasets to imporove the model accuracy.
+
+## Support multitasking concurrency
+
+Multitasking is not supported in versions prior to `Rosetta 1.0.0`, which means that only one privacy protocol (e.g. `SecureNN`, `Helix`, etc.) can be executed at any time, and if you want to execute multiple tasks concurrently, you must use multi-process to implement. We have refactored the code in `Rosetta v1.0.0` to support multitasking, allowing different tasks to be executed concurrently using different privacy protocols, meaning that if users have multiple task concurrency requirements, besides multi process implementation, the user business code can also be implemented in multi-threaded way, which provides users with more choices.
+
+Suppose we have a requirement to test the accuracy performance of the `TrueDiv` operation under the `SecureNN` and `Helix` protocols, we can write a case, run it using the `SecureNN` protocol, then modify it to run again using the `Helix` protocol and compare the results. With multitasking support, we can write our cases in a simple but elegant way (here is just a simple test requirement, which can be extended to specific requirements in more specific business scenarios).
+
+This example program with simple requirements is written using multitasking concurrency. The code is as follows:
+
+``` python
+import concurrent.futures
+import numpy as np
+import tensorflow as tf
+import latticex.rosetta as rtt
+
+
+def multi_task_fw(funcs):
+    task_id = 1
+    all_task = []
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor() as executor: 
+            for unit_func in funcs:
+                all_task.append(executor.submit(unit_func, str(task_id)))
+                task_id += 1
+    
+        concurrent.futures.wait(all_task, return_when=concurrent.futures.ALL_COMPLETED)
+    except Exception as e:
+        print(str(e))
+
+
+def run_trurediv_op(protocol, task_id, x_init, y_init):
+    local_g = tf.Graph()
+    with local_g.as_default():
+        X = tf.Variable(x_init)
+        Y = tf.Variable(y_init)
+        Z = tf.truediv(X, Y)
+        rv_Z = rtt.SecureReveal(Z)
+        init = tf.compat.v1.global_variables_initializer()
+
+        try:
+            rtt.activate(protocol, task_id=task_id)    # Add the task_id parameter
+            with tf.Session(task_id=task_id) as sess:  # Add the task_id parameter 
+                sess.run(init)        
+                real_Z = sess.run(rv_Z)
+                print("The result of the truediv calculation using {0} is: {1}".format(protocol, real_Z))
+            rtt.deactivate(task_id=task_id)
+        except Exception as e:
+            print(str(e))
+
+
+def Snn_Div(task_id):
+    return run_trurediv_op("SecureNN", task_id, 
+                        [1.1, 1200.5, -1.1, -23489.56], 
+                        [102.2, 812435.6, 0.95, 0.1234])
+
+
+def Helix_Div(task_id):
+    return run_trurediv_op("Helix", task_id, 
+                        [1.1, 1200.5, -1.1, -23489.56], 
+                        [102.2, 812435.6, 0.95, 0.1234])
+
+
+# run cases
+multi_task_fw([Snn_Div, Helix_Div])
+```
+
+The output of the above code is as follows: (only the calculation result log is kept, other log is removed)
+
+``` python
+The result of the truediv calculation using Helix is:    [b'0.010742' b'0.001465' b'-1.157837' b'-190521.267212']
+The result of the truediv calculation using SecureNN is: [b'0.010742' b'0.001465' b'-1.157715' b'-190521.267212']
+```
+
+The above code for multitasking support differs from the code before `Rosetta v1.0.0` in only two places.
+
+1. The `rtt.activate` interface adds a `task_id` parameter to bind a specific privacy protocol to a task in order to support multitasking. The `task_id` parameter is optional and if not set will only support single tasks, maintaining compatibility with previous versions.
+   
+2. The `SecureSession` constructor adds a `task_id` parameter to bind the specific session to a task. so that when the session execution graph is used later the operation layer can find and execute a specific privacy protocol based on `task_id`. The `task_id` parameter is optional, if not set it only supports single tasks, maintaining compatibility with previous versions.
+   > Note: The above code uses `tf.Session` and not `rtt.SecureSession` because `tf.Session` is statically overridden by `rtt.SecureSession` and `rtt.SecureSession` is derived from `tf.Session` with the extension parameter `task_id`. (see the implementation of `rtt.SecureSession` for more.)
 
 ## Conclusion
 
@@ -896,21 +1250,25 @@ dsets/
 │   ├── reg_test_x.csv
 │   ├── reg_test_y.csv
 │   ├── reg_train_x.csv
-│   └── reg_train_y.csv
+│   ├── reg_train_y.csv
+│   ├── mnist_test_x.csv
+│   └── mnist_test_y.csv
 ├── P0
 │   ├── cls_test_x.csv
 │   ├── cls_test_y.csv
 │   ├── cls_train_x.csv
 │   ├── cls_train_y.csv
 │   ├── reg_test_x.csv
-│   └── reg_train_x.csv
+│   ├── reg_train_x.csv
+│   └── mnist_train_x.csv
 ├── P1
 │   ├── cls_test_x.csv
 │   ├── cls_train_x.csv
 │   ├── reg_test_x.csv
 │   ├── reg_test_y.csv
 │   ├── reg_train_x.csv
-│   └── reg_train_y.csv
+│   ├── reg_train_y.csv
+│   └── mnist_train_x.csv
 └── P2
 ```
 

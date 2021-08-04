@@ -1,4 +1,4 @@
-![LOGO](https://mmbiz.qpic.cn/mmbiz_png/dV0Pt26LydDKo3HFIeH8afhT8XCmZibWhmj4vuVyuyGQrb0U4vIicibd5xjQKPOib7ibhFRWia9mdbz8uyricY9ZbDgXg/640)
+![LOGO](https://github.com/LatticeX-Foundation/Rosetta/blob/master/doc/_static/figs/LOGO.png)
 
 [![github license](https://img.shields.io/badge/license-LGPLv3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
@@ -17,7 +17,10 @@ Rosetta is a privacy-preserving framework based on [TensorFlow](https://www.tens
 import latticex.rosetta
 ```
 
-The current version integrates the secure multi-party computation protocols for 3 parties. The underlying protocol is [SecureNN](https://eprint.iacr.org/2018/442.pdf). It is secure in the semi-honest model with honest majority. And we are integrating more MPC protocols continuously.
+The current version integrates the secure multi-party computation protocols for 3 parties. The underlying protocols are [SecureNN](https://eprint.iacr.org/2018/442.pdf) and Helix. They are secure in the semi-honest model with honest majority.
+
+
+> **Rosetta has also integrated an efficient zero-knowledge proof protocol, [Mystique](https://eprint.iacr.org/2021/730), for secure inference tasks of sophisticated AI models, such as ResNet. Please refer to [wiki page](https://github.com/LatticeX-Foundation/Rosetta/wiki/Zero-knowledge-Proof-for-Machine-Learning-Inference) for its usage.**
 
 ## Installation
 
@@ -132,7 +135,7 @@ That's all, you can see Rosetta is so easy to use.
 
 For more details, please check [Tutorials](doc/TUTORIALS.md) and [Examples](./example).
 
-> Note: Currently Rosetta already supports 128-bit integer data type, which can be enabled by configuring the environment variable `export ROSETTA_MPC_128=ON`.
+> Note: Currently Rosetta already supports 128-bit integer data type, which can be enabled by configuring the environment variable `export ROSETTA_MPC_128=ON` and adding option `--enable-128bit` when compiling.
 
 ## Getting Started
 
