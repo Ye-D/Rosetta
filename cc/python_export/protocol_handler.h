@@ -27,6 +27,7 @@
 using namespace std;
 
 #include "cc/modules/protocol/public/include/protocol_manager.h"
+#include "cc/modules/protocol/public/include/protocol_ops.h"
 #include "cc/modules/common/include/utils/rtt_logger.h"
 #include "cc/modules/common/include/utils/rtt_exceptions.h"
 
@@ -79,24 +80,105 @@ class ProtocolHandler {
     rosetta::ProtocolManager::Instance()->SetFloatPrecision(float_precision, task_id);
   }
 
-  void get_float_precision(const string& task_id="") {
-    rosetta::ProtocolManager::Instance()->GetFloatPrecision(task_id);
+  int get_float_precision(const string& task_id="") {
+    return rosetta::ProtocolManager::Instance()->GetFloatPrecision(task_id);
   }
 
-  void set_saver_model(const vector<string> model_nodes, const string& task_id="") {
-    rosetta::ProtocolManager::Instance()->SetSaverModel(model_nodes, task_id);
+  void set_saver_computation_model(const string& task_id="") {
+    rosetta::SaverModel model;
+    model.set_computation_mode();
+    rosetta::ProtocolManager::Instance()->SetSaverModel(model, task_id);
   }
 
-  vector<string> get_saver_model(const string& task_id="") {
-    return rosetta::ProtocolManager::Instance()->GetSaverModel(task_id);
+  void set_saver_cipher_model(const map<string, int> model_nodes, const string& task_id="") {
+    rosetta::SaverModel model;
+    model.set_ciphertext_mode(model_nodes);
+    rosetta::ProtocolManager::Instance()->SetSaverModel(model, task_id);
   }
 
-  void set_restore_model(const vector<string>& model_nodes, const string& task_id="") {
-    rosetta::ProtocolManager::Instance()->SetRestoreModel(model_nodes, task_id);
+  void set_saver_plain_model(const vector<string> model_nodes, const string& task_id="") {
+    rosetta::SaverModel model;
+    model.set_plaintext_mode(model_nodes);
+    rosetta::ProtocolManager::Instance()->SetSaverModel(model, task_id);
   }
 
-  vector<string> get_restore_model(const string& task_id="") {
-    return rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+  map<string, int> get_saver_cipher_model(const string& task_id="") {
+    rosetta::SaverModel model = rosetta::ProtocolManager::Instance()->GetSaverModel(task_id);
+    return model.get_ciphertext_nodes();
+  }
+
+  vector<string> get_saver_plain_model(const string& task_id="") {
+    rosetta::SaverModel model = rosetta::ProtocolManager::Instance()->GetSaverModel(task_id);
+    return model.get_plaintext_nodes();
+  }
+
+  bool is_saver_computation_model(const string& task_id="") {
+    rosetta::SaverModel model = rosetta::ProtocolManager::Instance()->GetSaverModel(task_id);
+    return model.is_computation_mode();
+  }
+
+  bool is_saver_cipher_model(const string& task_id="") {
+    rosetta::SaverModel model = rosetta::ProtocolManager::Instance()->GetSaverModel(task_id);
+    return model.is_ciphertext_mode();
+  }
+
+  bool is_saver_plain_model(const string& task_id="") {
+    rosetta::SaverModel model = rosetta::ProtocolManager::Instance()->GetSaverModel(task_id);
+    return model.is_plaintext_mode();
+  }
+
+  void set_restore_computation_model(const string& task_id="") {
+    rosetta::RestoreModel model;
+    model.set_computation_mode();
+    rosetta::ProtocolManager::Instance()->SetRestoreModel(model, task_id);
+  }
+
+  void set_restore_cipher_model(const map<string, int>& model_nodes, const string& task_id="") {
+    rosetta::RestoreModel model;
+    model.set_ciphertext_mode(model_nodes);
+    rosetta::ProtocolManager::Instance()->SetRestoreModel(model, task_id);
+  }
+
+  void set_restore_private_plain_model(const string& model_nodes, const string& task_id="") {
+    rosetta::RestoreModel model;
+    model.set_private_plaintext_mode(model_nodes);
+    rosetta::ProtocolManager::Instance()->SetRestoreModel(model, task_id);
+  }
+
+  void set_restore_public_plain_model(const string& task_id="") {
+    rosetta::RestoreModel model;
+    model.set_public_plaintext_mode();
+    rosetta::ProtocolManager::Instance()->SetRestoreModel(model, task_id);
+  }
+
+  map<string, int> get_restore_cipher_model(const string& task_id="") {
+    rosetta::RestoreModel model = rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+    return model.get_ciphertext_nodes();
+  }
+
+  string get_restore_private_plain_model(const string& task_id="") {
+    rosetta::RestoreModel model = rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+    return model.get_plaintext_node();
+  }
+
+  bool is_restore_computation_model(const string& task_id="") {
+    rosetta::RestoreModel model = rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+    return model.is_computation_mode();
+  }
+
+  bool is_restore_cipher_model(const string& task_id="") {
+    rosetta::RestoreModel model = rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+    return model.is_ciphertext_mode();
+  }
+
+  bool is_restore_public_plain_model(const string& task_id="") {
+    rosetta::RestoreModel model = rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+    return model.is_public_plaintext_mode();
+  }
+
+  bool is_restore_private_plain_model(const string& task_id="") {
+    rosetta::RestoreModel model = rosetta::ProtocolManager::Instance()->GetRestoreModel(task_id);
+    return model.is_private_plaintext_mode();
   }
 
   std::string get_protocol_name(const string& task_id="") {

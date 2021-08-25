@@ -4,6 +4,7 @@
 #include "cc/modules/common/include/utils/rtt_logger.h"
 #include "cc/modules/common/include/utils/rtt_exceptions.h"
 #include "cc/modules/iowrapper/include/io_manager.h"
+#include "cc/modules/protocol/public/include/protocol_ops.h"
 
 
 #if ROSETTA_ENABLES_PROTOCOL_MPC_HELIX
@@ -125,8 +126,8 @@ int ProtocolManager::DeactivateProtocol(const string& task_id/*=""*/) {
   return 0;
 }
 
-void ProtocolManager::SetSaverModel(const vector<string>& model_nodes, const string& task_id/*=""*/) {
-  _Check_Model_Nodes(task_id, model_nodes, true);
+void ProtocolManager::SetSaverModel(const SaverModel& model, const string& task_id/*=""*/) {
+  _Check_Saver_Model(task_id, model);
 
   std::lock_guard<std::mutex> lock(protocol_mutex_);
   auto iter = working_protocols_.find(task_id);
@@ -135,22 +136,22 @@ void ProtocolManager::SetSaverModel(const vector<string>& model_nodes, const str
     return;
   }
   
-  iter->second->GetMpcContext()->SAVER_MODE = model_nodes;
+  iter->second->GetMpcContext()->SAVER_MODEL = model;
 }
 
-vector<string> ProtocolManager::GetSaverModel(const string& task_id/*=""*/) {
+SaverModel ProtocolManager::GetSaverModel(const string& task_id/*=""*/) {
   std::lock_guard<std::mutex> lock(protocol_mutex_);
   auto iter = working_protocols_.find(task_id);
   if (iter == working_protocols_.end()) {
     tlog_warn_(task_id) << "get restore model failed, task id: " << task_id << " not exists!";
-    return vector<string>();
+    return SaverModel();
   }
 
-  return iter->second->GetMpcContext()->SAVER_MODE;
+  return iter->second->GetMpcContext()->SAVER_MODEL;
 }
 
-void ProtocolManager::SetRestoreModel(const vector<string>& model_nodes, const string& task_id/*=""*/) {
-  _Check_Model_Nodes(task_id, model_nodes, false);
+void ProtocolManager::SetRestoreModel(const RestoreModel& model, const string& task_id/*=""*/) {
+  _Check_Restore_Model(task_id, model);
 
   std::lock_guard<std::mutex> lock(protocol_mutex_);
   auto iter = working_protocols_.find(task_id);
@@ -159,18 +160,18 @@ void ProtocolManager::SetRestoreModel(const vector<string>& model_nodes, const s
     return;
   }
 
-  iter->second->GetMpcContext()->RESTORE_MODE = model_nodes;
+  iter->second->GetMpcContext()->RESTORE_MODEL = model;
 }
 
-vector<string> ProtocolManager::GetRestoreModel(const string& task_id/*=""*/) {
+RestoreModel ProtocolManager::GetRestoreModel(const string& task_id/*=""*/) {
   std::lock_guard<std::mutex> lock(protocol_mutex_);
   auto iter = working_protocols_.find(task_id);
   if (iter == working_protocols_.end()) {
     tlog_warn_(task_id) << "get restore model failed, task id: " << task_id << " not exists!";
-    return vector<string>();
+    return RestoreModel();
   }
 
-  return iter->second->GetMpcContext()->RESTORE_MODE;
+  return iter->second->GetMpcContext()->RESTORE_MODEL;
 }
 
 void ProtocolManager::SetFloatPrecision(int float_precision, const string& task_id/*=""*/) {
@@ -191,7 +192,6 @@ int ProtocolManager::GetFloatPrecision(const string& task_id/*=""*/) {
     tlog_warn_(task_id) << "get float precision failed, task id: " << task_id << " not exists!";
     return -1;
   }
-
   return iter->second->GetMpcContext()->FLOAT_PRECISION;
 }
 
@@ -232,25 +232,67 @@ string ProtocolManager::QueryMappingID(const uint64_t& unique_id) {
   return iter->second;
 }
 
-void ProtocolManager::_Check_Model_Nodes(const string& task_id, const vector<string>& model_nodes, bool is_saver_model) {
-    vector<string> nodes = is_saver_model ? rosetta::IOManager::Instance()->GetIOWrapper(task_id)->GetResultNodes()
-                                          : rosetta::IOManager::Instance()->GetIOWrapper(task_id)->GetDataNodes();
-    
-    for (auto iter = model_nodes.begin(); iter != model_nodes.end(); iter++) {
-      if (std::find(nodes.begin(), nodes.end(), *iter) == nodes.end()) {
-        throw invalid_argument_exp(*iter + " is not a valid result node in saver/restore model!");
-      }
-    }
-
-    if (model_nodes.size() > 1) {
-      map<string, int> computation_nodes = rosetta::IOManager::Instance()->GetIOWrapper(task_id)->GetComputationNodes();
-      for (auto iter = computation_nodes.begin(); iter != computation_nodes.end(); iter++) {
-        if (std::find(model_nodes.begin(), model_nodes.end(), iter->first) == model_nodes.end()) {
-          throw invalid_argument_exp(iter->first + " is a computation node not in save/restore model!");
+void ProtocolManager::_Check_Saver_Model(const string& task_id, const SaverModel& model) {
+  shared_ptr<NET_IO> net_io = IOManager::Instance()->GetIOWrapper(task_id);
+  const map<string, int>& computation_nodes = net_io->GetComputationNodes();
+  const vector<string>& result_nodes = net_io->GetResultNodes();
+  if (model.is_ciphertext_mode()) {
+    const map<string, int>& ciphertext_nodes = model.get_ciphertext_nodes();
+    for (auto iter = ciphertext_nodes.begin(); iter != ciphertext_nodes.end(); iter++) {
+      int send_party = iter->second;
+      string recv_node = iter->first;
+      if (std::find(result_nodes.begin(), result_nodes.end(), recv_node) != result_nodes.end()) {
+        log_info << "Check Saver Model: " << recv_node << " is a valid result node";
+      } else {
+        auto citer = computation_nodes.find(recv_node);
+        if (citer != computation_nodes.end() && send_party == citer->second) {
+          log_info << "Check Saver Model: " << recv_node << " is a valid computation node and saves ciphertext model locally";
+        } else {
+          throw other_exp(recv_node + " check saver ciphertext model failed!");
         }
       }
     }
+  } else if (model.is_plaintext_mode()) {
+    const vector<string>& plaintext_nodes = model.get_plaintext_nodes();
+    for (auto iter = plaintext_nodes.begin(); iter != plaintext_nodes.end(); iter++) {
+      if (std::find(result_nodes.begin(), result_nodes.end(), *iter) != result_nodes.end()) {
+        log_info << "Check Saver Model: " << *iter << " is a valid result node";
+      } else {
+        throw other_exp(*iter + " is not a valid result node, check saver plaintext model failed!");
+      }
+    }
   }
+}
+
+void ProtocolManager::_Check_Restore_Model(const string& task_id, const RestoreModel& model) {
+  shared_ptr<NET_IO> net_io = IOManager::Instance()->GetIOWrapper(task_id);
+  const vector<string>& data_nodes = net_io->GetDataNodes();
+  const map<string, int>& computation_nodes = net_io->GetComputationNodes();
+  if (model.is_ciphertext_mode()) {
+    const map<string, int>& ciphertext_nodes = model.get_ciphertext_nodes();
+    for (auto iter = ciphertext_nodes.begin(); iter != ciphertext_nodes.end(); iter++) {
+      string send_node = iter->first;
+      int recv_party = iter->second;
+      if (std::find(data_nodes.begin(), data_nodes.end(), send_node) != data_nodes.end()) {
+        log_info << "Check Restore Model: " << send_node << " is a valid data node";
+      } else {
+        auto citer = computation_nodes.find(send_node);
+        if (citer != computation_nodes.end() && citer->second == recv_party) {
+          log_info << "Check Restore Model: " << send_node << " is a valid computation node and restore ciphertext model locally";
+        } else {
+          throw other_exp(send_node + " check restore ciphertext model fail!");
+        }
+      }
+    }
+  } else if (model.is_private_plaintext_mode()) {
+    const string& plaintext_node = model.get_plaintext_node();
+    if (std::find(data_nodes.begin(), data_nodes.end(), plaintext_node) != data_nodes.end()) {
+      log_info << "Check Restore Model: " << plaintext_node << " is a valid data node";
+    } else {
+      throw other_exp(plaintext_node + " is not a valid data node, check restore plaintext model fail!");
+    }
+  }
+}
 
 /**
  * @note: you can also register your customized cryptographic protocol factory here

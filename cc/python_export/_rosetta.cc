@@ -25,7 +25,7 @@ namespace py = pybind11;
 #include "cc/python_export/dataset.h"
 #include "cc/python_export/msg_id_handle.h"
 #include "cc/python_export/protocol_handler.h"
-#include "cc/third_party/io/include/io/internal/channel_interface.h"
+#include "cc/third_party/io/include/io/channel.h"
 #include "cc/python_export/io_handler.h"
 
 PYBIND11_MODULE(_rosetta, m) {
@@ -61,10 +61,24 @@ PYBIND11_MODULE(_rosetta, m) {
     .def("set_loglevel", &ProtocolHandler::set_loglevel, py::arg("level")=LogLevel::Info)
     .def("set_float_precision", &ProtocolHandler::set_float_precision, py::arg("float_precision"), py::arg("task_id") = "")
     .def("get_float_precision", &ProtocolHandler::get_float_precision, py::arg("task_id") = "")
-    .def("set_saver_model", &ProtocolHandler::set_saver_model, py::arg("model"), py::arg("task_id") = "")
-    .def("get_saver_model", &ProtocolHandler::get_saver_model, py::arg("task_id") = "")
-    .def("set_restore_model", &ProtocolHandler::set_restore_model, py::arg("model"), py::arg("task_id") = "")
-    .def("get_restore_model", &ProtocolHandler::get_restore_model, py::arg("task_id") = "")
+    .def("set_saver_computation_model", &ProtocolHandler::set_saver_computation_model, py::arg("task_id") = "")
+    .def("set_saver_cipher_model", &ProtocolHandler::set_saver_cipher_model, py::arg("model"), py::arg("task_id") = "")
+    .def("set_saver_plain_model", &ProtocolHandler::set_saver_plain_model, py::arg("model"), py::arg("task_id") = "")
+    .def("get_saver_cipher_model", &ProtocolHandler::get_saver_cipher_model, py::arg("task_id") = "")
+    .def("get_saver_plain_model", &ProtocolHandler::get_saver_plain_model, py::arg("task_id") = "")
+    .def("is_saver_computation_model", &ProtocolHandler::is_saver_computation_model, py::arg("task_id") = "")
+    .def("is_saver_plain_model", &ProtocolHandler::is_saver_plain_model, py::arg("task_id") = "")
+    .def("is_saver_cipher_model", &ProtocolHandler::is_saver_cipher_model, py::arg("task_id") = "")
+    .def("set_restore_computation_model", &ProtocolHandler::set_restore_computation_model, py::arg("task_id") = "")
+    .def("set_restore_cipher_model", &ProtocolHandler::set_restore_cipher_model, py::arg("model"), py::arg("task_id") = "")
+    .def("set_restore_private_plain_model", &ProtocolHandler::set_restore_private_plain_model, py::arg("model"), py::arg("task_id") = "")
+    .def("set_restore_public_plain_model", &ProtocolHandler::set_restore_public_plain_model, py::arg("task_id") = "")
+    .def("get_restore_cipher_model", &ProtocolHandler::get_restore_cipher_model, py::arg("task_id") = "")
+    .def("get_restore_private_plain_model", &ProtocolHandler::get_restore_private_plain_model, py::arg("task_id") = "")
+    .def("is_restore_computation_model", &ProtocolHandler::is_restore_computation_model, py::arg("task_id") = "")
+    .def("is_restore_cipher_model", &ProtocolHandler::is_restore_cipher_model, py::arg("task_id") = "")
+    .def("is_restore_public_plain_model", &ProtocolHandler::is_restore_public_plain_model, py::arg("task_id") = "")
+    .def("is_restore_private_plain_model", &ProtocolHandler::is_restore_private_plain_model, py::arg("task_id") = "")
     .def("rand_seed", &ProtocolHandler::rand_seed, py::arg("task_id") = "")
     .def("start_perf_stats", &ProtocolHandler::start_perf_stats, py::arg("task_id") = "")
     .def("get_perf_stats", &ProtocolHandler::get_perf_stats, py::arg("pretty")=true, py::arg("task_id") = "")
@@ -77,11 +91,12 @@ PYBIND11_MODULE(_rosetta, m) {
   py::class_<IOHandler>(m_io_handler, "IOHandler")
     .def(py::init<>())
     .def("create_io", &IOHandler::create_io)
+    .def("has_io_wrapper", &IOHandler::has_io_wrapper)
     .def("get_io_wrapper", &IOHandler::get_io_wrapper)
     .def("set_channel", &IOHandler::set_channel)
     ;
   
-  py::class_<IChannel,  shared_ptr<IChannel> >(m_io_handler, "IChannel")
+  py::class_<IChannel,  unique_ptr<IChannel, py::nodelete> >(m_io_handler, "IChannel")
     ;
 
   py::class_<IOWrapper,  shared_ptr<IOWrapper> >(m_io_handler, "IOWrapper")
